@@ -44,6 +44,22 @@ export class MessagesGateway {
     return this.messagesService.identify(name, client.id);
   }
 
+  @SubscribeMessage('current_users')
+  activeUsers() {
+    return this.messagesService.clientToUser;
+  }
+
+  @SubscribeMessage('active')
+  active(@MessageBody('name') name: string, @ConnectedSocket() client: Socket) {
+    this.messagesService.identify(name, client.id);
+    this.server.emit('active_users', this.messagesService.clientToUser);
+    client.on('disconnect', () => {
+      this.messagesService.remove(client.id);
+      this.server.emit('active_users', this.messagesService.clientToUser);
+    });
+    return 'connected';
+  }
+
   @SubscribeMessage('typing')
   async typing(
     @MessageBody() isTyping: boolean,

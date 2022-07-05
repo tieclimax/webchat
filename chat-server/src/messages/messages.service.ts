@@ -27,6 +27,12 @@ export class MessagesService {
     return Object.keys(this.clientToUser);
   }
 
+  remove(clientId: string) {
+    const name = this.clientToUser[clientId];
+    delete this.clientToUser[clientId];
+    return name;
+  }
+
   getClientName(clientId: string) {
     return this.clientToUser[clientId];
   }

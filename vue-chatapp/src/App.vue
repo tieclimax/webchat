@@ -1,60 +1,71 @@
 <script>
-import { io } from 'socket.io-client';
-import { onBeforeMount, ref } from 'vue';
+import { io } from "socket.io-client";
+import { onBeforeMount, ref } from "vue";
 
 export default {
   setup() {
-    const socket = io('http://localhost:8080');
+    const socket = io("http://localhost:8080");
     const joined = ref(false);
-    const name = ref('');
-    const colorName = ref('');
+    const name = ref("");
+    const colorName = ref("");
     const messages = ref([]);
-    const messageText = ref('');
-    const typingDisplay = ref('');
-    const timeout = ref('');
+    const messageText = ref("");
+    const typingDisplay = ref("");
+    const timeout = ref("");
 
     onBeforeMount(() => {
-      socket.emit('findAllMessages', {}, (resposne) => {
+      socket.emit("findAllMessages", {}, (resposne) => {
         messages.value = resposne;
       });
 
-      socket.on('message', (message) => {
+      socket.on("message", (message) => {
         messages.value.push(message);
       });
 
-      socket.on('typing', ({ name, isTyping }) => {
+      socket.on("typing", ({ name, isTyping }) => {
         if (isTyping.isTyping) {
           typingDisplay.value = `${name} is typing...`;
         } else {
-          typingDisplay.value = '';
+          typingDisplay.value = "";
         }
+      });
+
+      // initial on page load
+      socket.emit("current_users", null, (users) => {
+        console.log("active users", users);
       });
     });
 
+    socket.on("active_users", (users) => {
+      console.log("active users", users);
+    });
     const join = () => {
-      socket.emit('join', { name: name.value }, () => {
+      socket.emit("active", { name: name.value }, (msg) => {
+        console.log(msg);
+      });
+      socket.emit("join", { name: name.value }, () => {
         joined.value = true;
         // random color
         const colors = [
-          '#f44336',
-          '#e91e63',
-          '#9c27b0',
-          '#673ab7',
-          '#3f51b5',
-          '#2196f3',
-          '#03a9f4',
-          '#00bcd4',
-          '#009688',
-          '#4caf50',
-          '#8bc34a',
-          '#cddc39',
-          '#ffeb3b',
-          '#ffc107',
-          '#ff9800',
-          '#ff5722',
-          '#795548',
-          '#9e9e9e',
-          '#607d8b',
+          "#f44336",
+          "#e91e63",
+          "#9c27b0",
+          "#673ab7",
+          "#3f51b5",
+          "#2196f3",
+          "#03a9f4",
+          "#00bcd4",
+          "#009688",
+          "#4caf50",
+          "#8bc34a",
+          "#cddc39",
+          "#ffeb3b",
+          "#ffc107",
+          "#ff9800",
+          "#ff5722",
+          "#795548",
+          "#9e9e9e",
+          "#607d8b",
         ];
         const randomColor = colors[Math.floor(Math.random() * colors.length)];
         colorName.value = randomColor;
@@ -65,19 +76,19 @@ export default {
       if (!messageText.value) return;
 
       socket.emit(
-        'createMessege',
+        "createMessege",
         { text: messageText.value, color: colorName.value },
         () => {
-          messageText.value = '';
+          messageText.value = "";
         }
       );
     };
 
     const emitTyping = () => {
-      socket.emit('typing', { isTyping: true });
+      socket.emit("typing", { isTyping: true });
 
       timeout.value = setTimeout(() => {
-        socket.emit('typing', { isTyping: false });
+        socket.emit("typing", { isTyping: false });
       }, 3000);
     };
 
@@ -179,5 +190,5 @@ export default {
 </template>
 
 <style>
-@import './assets/base.css';
+@import "./assets/base.css";
 </style>
