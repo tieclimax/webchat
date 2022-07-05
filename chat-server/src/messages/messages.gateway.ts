@@ -41,7 +41,25 @@ export class MessagesGateway {
     @MessageBody('name') name: string,
     @ConnectedSocket() client: Socket,
   ) {
+    this.server.emit('online', name);
+
     return this.messagesService.identify(name, client.id);
+  }
+
+  @SubscribeMessage('current_users')
+  activeUsers() {
+    return this.messagesService.clientToUser;
+  }
+
+  @SubscribeMessage('active')
+  active(@MessageBody('name') name: string, @ConnectedSocket() client: Socket) {
+    this.messagesService.identify(name, client.id);
+    this.server.emit('active_users', this.messagesService.clientToUser);
+    client.on('disconnect', () => {
+      this.messagesService.remove(client.id);
+      this.server.emit('active_users', this.messagesService.clientToUser);
+    });
+    return 'connected';
   }
 
   @SubscribeMessage('typing')
@@ -52,5 +70,15 @@ export class MessagesGateway {
     const name = await this.messagesService.getClientName(client.id);
 
     client.broadcast.emit('typing', { name, isTyping });
+  }
+
+  @SubscribeMessage('goOffline')
+  async disconnect(
+    @MessageBody('name') name: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.messagesService.remove(client.id);
+    this.server.emit('active_users', this.messagesService.clientToUser);
+    client.broadcast.emit('disconected', { name });
   }
 }

@@ -24,10 +24,22 @@ export class MessagesService {
 
   identify(name: string, clientId: string) {
     this.clientToUser[clientId] = name;
+
     return Object.keys(this.clientToUser);
   }
 
   getClientName(clientId: string) {
     return this.clientToUser[clientId];
+  }
+  // disconnected(clientId: string) {
+  //   delete this.clientToUser[clientId];
+  //   console.log(this.clientToUser);
+
+  //   return true;
+  // }
+  remove(clientId: string) {
+    const name = this.clientToUser[clientId];
+    delete this.clientToUser[clientId];
+    return name;
   }
 }
