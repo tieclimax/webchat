@@ -2,7 +2,7 @@
 import { io } from 'socket.io-client';
 import { onBeforeMount, ref } from 'vue';
 
-const socket = io('http://localhost:8080');
+const socket = io(process.env.VUE_APP_SOCKET_URL);
 const joined = ref(false);
 const name = ref('');
 const colorName = ref('');
