@@ -99,28 +99,46 @@ const disconected = () => {
 </script>
 
 <template>
-  <div class="grid grid-cols-5 gap-4">
-    <div class="flex flex-col bg-gray-100 col-span-1 p-8">
-      <h1 class="text-2xl font-bold mb-4">
-        <i class="fas fa-users mr-2"></i>Current Users
-      </h1>
-      <li
-        v-for="user in currentUsers"
-        :key="user.id"
-        class="text-gray-600 p-2 list-none font-bold flex gap-1 item-center"
-      >
-        <!-- <i class="fas fa-circle text-sm animate-pluse"></i> -->
-        <span class="flex h-3 w-3">
-          <span
-            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"
-          ></span>
-          <span
-            class="relative inline-flex rounded-full h-3 w-3 bg-sky-500"
-          ></span>
-        </span>
+  <div class="grid grid-cols-1 lg:grid-cols-5 lg:gap-4">
+    <div
+      class="flex lg:flex-col justify-between bg-gray-100 lg:col-span-1 lg:p-8 p-4 relative"
+    >
+      <div class="">
+        <h1 class="lg:text-2xl text-xl font-bold mb-4">
+          <i class="fas fa-users mr-2"></i>Current Users
+        </h1>
+        <div class="flex lg:flex-col overflow-x-auto w-[90%] lg:w-full">
+          <h1
+            v-for="user in currentUsers"
+            :key="user.id"
+            class="text-gray-600 p-2 list-none font-bold flex gap-1 item-center"
+          >
+            <span class="flex h-3 w-3">
+              <span
+                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"
+              ></span>
+              <span
+                class="relative inline-flex rounded-full h-3 w-3 bg-sky-500"
+              ></span>
+            </span>
 
-        {{ user }}
-      </li>
+            {{ user }}
+          </h1>
+        </div>
+      </div>
+      <div class="lg:block absolute hidden bottom-0 py-4">
+        <h1 class="text-sm">Create By RedHacKeR</h1>
+      </div>
+      <div class="flex flex-col lg:hidden gap-y-4">
+        <button
+          v-if="joined"
+          @click="disconected"
+          class="p-1 border border-red-600 text-white font-bold bg-red-600 rounded-lg shadow-md"
+        >
+          Disconected
+        </button>
+        <h1 class="text-sm pt-1">Create By RedHacKeR</h1>
+      </div>
     </div>
     <div
       class="flex flex-col items-center justify-between gap-4 h-screen col-span-3"
@@ -130,7 +148,10 @@ const disconected = () => {
         <h1 class="text-4xl text-green-600 font-bold my-4">WeBChat</h1>
       </div>
       <div v-if="!joined" class="mb-auto">
-        <form @submit.prevent="join" class="p-4 flex gap-4 items-center">
+        <form
+          @submit.prevent="join"
+          class="p-4 flex lg:flex-row flex-col gap-4 items-center"
+        >
           <h1 class="text-lg">What your name?</h1>
           <input
             v-model="name"
@@ -179,16 +200,16 @@ const disconected = () => {
         </div>
         <hr />
 
-        <span v-if="name" class="text-base text-gray-400"
+        <span v-if="name" class="text-base text-gray-400 my-2 lg:my-0"
           >current name: {{ name }}</span
         >
 
         <hr />
         <form
           @submit.prevent="sendMessage"
-          class="p-4 flex gap-4 justify-center items-center w-full"
+          class="lg:p-4 flex gap-4 justify-center items-center w-full mb-4 lg:mb-0"
         >
-          <label class="text-lg">Message:</label>
+          <label class="text-lg lg:block hidden">Message:</label>
           <input
             v-model="messageText"
             @input="emitTyping"
@@ -197,18 +218,18 @@ const disconected = () => {
           />
           <button
             type="submit"
-            class="font-bold p-2 px-8 font-bold border border-green-400 rounded-lg bg-green-400 hover:bg-green-600 hover:text-white duration-200 transform cursor-pointer"
+            class="font-bold shadow-md p-2 px-8 font-bold border border-green-400 rounded-lg bg-green-400 hover:bg-green-600 hover:text-white duration-200 transform cursor-pointer"
           >
             Send
           </button>
         </form>
       </div>
     </div>
-    <div class="flex flex-col items-center col-span-1 p-8">
+    <div class="lg:flex hidden flex-col items-center col-span-1 p-8">
       <button
         v-if="joined"
         @click="disconected"
-        class="my-4 p-2 border border-red-600 text-white font-bold bg-red-600 rounded-lg"
+        class="my-4 p-2 border border-red-600 text-white font-bold bg-red-600 rounded-lg shadow-md"
       >
         Disconected
       </button>
