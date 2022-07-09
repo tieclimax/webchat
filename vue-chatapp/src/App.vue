@@ -107,15 +107,15 @@ const disconected = () => {
     <div
       class="flex lg:flex-col justify-between bg-gray-100 dark:bg-gray-800 lg:col-span-1 lg:p-8 p-4 relative"
     >
-      <div class="">
+      <div class="w-1/2 lg:w-full">
         <h1 class="lg:text-2xl text-xl font-bold mb-4">
           <i class="fas fa-users mr-2"></i>Current Users
         </h1>
-        <div class="flex lg:flex-col overflow-x-auto w-[90%] lg:w-full">
+        <div class="flex lg:flex-col overflow-x-auto lg:w-full">
           <h1
             v-for="user in currentUsers"
             :key="user.id"
-            class="text-gray-600 p-2 list-none font-bold flex gap-1 item-center"
+            class="text-gray-600 lg:p-2 p-1 list-none font-bold flex gap-1 item-center whitespace-nowrap"
           >
             <span class="flex h-3 w-3">
               <span
@@ -142,7 +142,7 @@ const disconected = () => {
         >
           Disconected
         </button>
-        <div class="flex gap-x-2 items-center">
+        <div class="flex gap-x-2 items-center pt-1">
           <button @click="toggleDark()">
             <span v-if="!isDark"><i class="fas fa-moon text-2xl"></i></span>
             <span v-if="isDark"><i class="fas fa-sun text-2xl"></i></span>
