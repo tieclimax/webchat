@@ -1,7 +1,7 @@
 <script setup>
 import { io } from 'socket.io-client';
 import { onBeforeMount, ref } from 'vue';
-
+import { useDark, useToggle } from '@vueuse/core';
 const socket = io('https://chat-server-nest-js.herokuapp.com');
 const joined = ref(false);
 const name = ref('');
@@ -11,6 +11,8 @@ const messageText = ref('');
 const typingDisplay = ref('');
 const timeout = ref('');
 const currentUsers = ref([]);
+const isDark = useDark();
+const toggleDark = useToggle(isDark);
 
 onBeforeMount(() => {
   socket.emit('findAllMessages', {}, (resposne) => {
@@ -98,10 +100,12 @@ const disconected = () => {
 };
 </script>
 
-<template>
-  <div class="grid grid-cols-1 lg:grid-cols-5 lg:gap-4">
+<template class="dark">
+  <div
+    class="grid grid-cols-1 lg:grid-cols-5 lg:gap-4 dark:bg-gray-600 dark:text-white"
+  >
     <div
-      class="flex lg:flex-col justify-between bg-gray-100 lg:col-span-1 lg:p-8 p-4 relative"
+      class="flex lg:flex-col justify-between bg-gray-100 dark:bg-gray-800 lg:col-span-1 lg:p-8 p-4 relative"
     >
       <div class="">
         <h1 class="lg:text-2xl text-xl font-bold mb-4">
@@ -129,6 +133,7 @@ const disconected = () => {
       <div class="lg:block absolute hidden bottom-0 py-4">
         <h1 class="text-sm">Create By RedHacKeR</h1>
       </div>
+
       <div class="flex flex-col lg:hidden gap-y-4">
         <button
           v-if="joined"
@@ -218,7 +223,7 @@ const disconected = () => {
           />
           <button
             type="submit"
-            class="font-bold shadow-md p-2 px-8 font-bold border border-green-400 rounded-lg bg-green-400 hover:bg-green-600 hover:text-white duration-200 transform cursor-pointer"
+            class="font-bold shadow-md p-2 px-8 border border-green-400 rounded-lg bg-green-400 hover:bg-green-600 hover:text-white duration-200 transform cursor-pointer"
           >
             Send
           </button>
@@ -226,6 +231,16 @@ const disconected = () => {
       </div>
     </div>
     <div class="lg:flex hidden flex-col items-center col-span-1 p-8">
+      <div class="flex justify-end">
+        <button @click="toggleDark()">
+          <!-- <i
+            :class="isDark ? 'fas fa-moon mr-2' : 'fas fa-sun mr-2'"
+            class="text-2xl"
+          ></i> -->
+          <span v-if="!isDark"><i class="fas fa-moon text-2xl"></i></span>
+          <span v-if="isDark"><i class="fas fa-sun text-2xl"></i></span>
+        </button>
+      </div>
       <button
         v-if="joined"
         @click="disconected"
