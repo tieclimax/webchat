@@ -142,7 +142,15 @@ const disconected = () => {
         >
           Disconected
         </button>
-        <h1 class="text-sm pt-1">Create By RedHacKeR</h1>
+        <div class="flex gap-x-2 items-center">
+          <button @click="toggleDark()">
+            <span v-if="!isDark"><i class="fas fa-moon text-2xl"></i></span>
+            <span v-if="isDark"><i class="fas fa-sun text-2xl"></i></span>
+          </button>
+          <div>
+            <h1 class="text-sm">Create By RedHacKeR</h1>
+          </div>
+        </div>
       </div>
     </div>
     <div
@@ -161,7 +169,7 @@ const disconected = () => {
           <input
             v-model="name"
             type="text"
-            class="outline-red-500 p-2 border border-red-300 rounded-md"
+            class="outline-red-500 p-2 border border-red-300 rounded-md text-black"
           />
           <button
             type="submit"
@@ -219,7 +227,7 @@ const disconected = () => {
             v-model="messageText"
             @input="emitTyping"
             type="text"
-            class="outline-red-500 p-2 border border-red-300 rounded-md w-1/2"
+            class="outline-red-500 p-2 border border-red-300 rounded-md w-1/2 text-black"
           />
           <button
             type="submit"
@@ -233,10 +241,6 @@ const disconected = () => {
     <div class="lg:flex hidden flex-col items-center col-span-1 p-8">
       <div class="flex justify-end">
         <button @click="toggleDark()">
-          <!-- <i
-            :class="isDark ? 'fas fa-moon mr-2' : 'fas fa-sun mr-2'"
-            class="text-2xl"
-          ></i> -->
           <span v-if="!isDark"><i class="fas fa-moon text-2xl"></i></span>
           <span v-if="isDark"><i class="fas fa-sun text-2xl"></i></span>
         </button>
