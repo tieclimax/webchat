@@ -14,6 +14,12 @@ const currentUsers = ref([]);
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
 
+// scroll to bottom of chat
+const scrollToBottom = () => {
+  const chat = document.getElementById('chat');
+  chat.scrollTop = chat.scrollHeight;
+};
+
 onBeforeMount(() => {
   socket.emit('findAllMessages', {}, (resposne) => {
     messages.value = resposne;
@@ -81,6 +87,7 @@ const sendMessage = () => {
     { text: messageText.value, color: colorName.value },
     () => {
       messageText.value = '';
+      scrollToBottom();
     }
   );
 };
@@ -154,7 +161,7 @@ const disconected = () => {
       </div>
     </div>
     <div
-      class="flex flex-col items-center justify-between gap-4 h-screen col-span-3"
+      class="flex flex-col items-center justify-between lg:gap-4 h-screen col-span-3"
     >
       <div class="flex gap-2 items-center">
         <i class="fas fa-comments text-4xl"></i>
@@ -179,7 +186,11 @@ const disconected = () => {
           </button>
         </form>
       </div>
-      <div class="container mb-auto p-4 h-[80%] overflow-y-auto" v-else>
+      <div
+        class="container mb-auto p-4 lg:h-[80%] h-[65%] overflow-y-auto"
+        v-else
+        id="chat"
+      >
         <div
           v-for="message in messages"
           :key="message"
@@ -206,7 +217,7 @@ const disconected = () => {
 
       <div
         v-if="joined"
-        class="flex flex-col items-center justify-center absolute bottom-0 left-0 w-full"
+        class="flex flex-col items-center justify-center lg:absolute fixed bottom-0 left-0 w-full"
       >
         <div v-if="typingDisplay" class="p-2 animate-bounce">
           <span class="text-base text-gray-400">{{ typingDisplay }}</span>
