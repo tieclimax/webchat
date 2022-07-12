@@ -12,13 +12,35 @@ export class MessagesService {
       text: createMessageDto.text,
       color: createMessageDto.color,
       timestamp: moment().format('YYYY-MM-DD HH:mm:ss'),
+      readed: Object.keys(this.clientToUser).length,
     };
 
     this.messages.push(message);
+
+    // update old messages readed
+    this.messages.forEach((message) => {
+      message.readed = Object.keys(this.clientToUser).length;
+    });
+
     return message;
   }
 
   findAll() {
+    // update old messages readed
+    this.messages.forEach((message) => {
+      message.readed = Object.keys(this.clientToUser).length;
+    });
+    // delete messages every 10 minutes from messages.timestamp
+    this.messages = this.messages.filter((message) => {
+      const now = moment();
+      const messageDate = moment(message.timestamp);
+      const diff = now.diff(messageDate, 'minutes');
+      if (diff > 10) {
+        return false;
+      }
+      return true;
+    });
+
     return this.messages;
   }
 
@@ -27,16 +49,16 @@ export class MessagesService {
 
     return Object.keys(this.clientToUser);
   }
+  // checkOnline(message = 'ping', clientId: string) {
+  //   // console.log(message, clientId);
+
+  //   return message;
+  // }
 
   getClientName(clientId: string) {
     return this.clientToUser[clientId];
   }
-  // disconnected(clientId: string) {
-  //   delete this.clientToUser[clientId];
-  //   console.log(this.clientToUser);
 
-  //   return true;
-  // }
   remove(clientId: string) {
     const name = this.clientToUser[clientId];
     delete this.clientToUser[clientId];

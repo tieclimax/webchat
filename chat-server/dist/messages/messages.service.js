@@ -20,11 +20,27 @@ let MessagesService = class MessagesService {
             text: createMessageDto.text,
             color: createMessageDto.color,
             timestamp: moment().format('YYYY-MM-DD HH:mm:ss'),
+            readed: Object.keys(this.clientToUser).length,
         };
         this.messages.push(message);
+        this.messages.forEach((message) => {
+            message.readed = Object.keys(this.clientToUser).length;
+        });
         return message;
     }
     findAll() {
+        this.messages.forEach((message) => {
+            message.readed = Object.keys(this.clientToUser).length;
+        });
+        this.messages = this.messages.filter((message) => {
+            const now = moment();
+            const messageDate = moment(message.timestamp);
+            const diff = now.diff(messageDate, 'minutes');
+            if (diff > 10) {
+                return false;
+            }
+            return true;
+        });
         return this.messages;
     }
     identify(name, clientId) {

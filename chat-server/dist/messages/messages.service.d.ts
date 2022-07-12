@@ -8,6 +8,7 @@ export declare class MessagesService {
         text: string;
         color: string;
         timestamp: string;
+        readed: number;
     };
     findAll(): Message[];
     identify(name: string, clientId: string): string[];

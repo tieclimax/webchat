@@ -10,6 +10,7 @@ export declare class MessagesGateway {
         text: string;
         color: string;
         timestamp: string;
+        readed: number;
     };
     findAll(): import("./entities/message.entity").Message[];
     joinRoom(name: string, client: Socket): string[];

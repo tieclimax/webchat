@@ -1,8 +1,10 @@
 <script setup>
 import { io } from 'socket.io-client';
-import { onBeforeMount, ref } from 'vue';
-import { useDark, useToggle } from '@vueuse/core';
+import { onBeforeMount, ref, onBeforeUnmount, onUpdated, onMounted } from 'vue';
+import { useDark, useToggle, useMouse } from '@vueuse/core';
+
 const socket = io('https://chat-server-nest-js.herokuapp.com');
+// const socket = io('http://localhost:8080');
 const joined = ref(false);
 const name = ref('');
 const colorName = ref('');
@@ -14,19 +16,36 @@ const currentUsers = ref([]);
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
 
-// scroll to bottom of chat
+const { x, y } = useMouse();
 const scrollToBottom = () => {
   const chat = document.getElementById('chat');
   chat.scrollTop = chat.scrollHeight;
 };
+// check mouse position and  socket.emit('findAllMessages')
+onUpdated(() => {
+  if (x > 0 && y > 0) {
+    socket.emit('findAllMessages', {}, (resposne) => {
+      messages.value = resposne;
+    });
+  } else {
+    socket.emit('findAllMessages', {}, (resposne) => {
+      messages.value = resposne;
+    });
+  }
+});
 
 onBeforeMount(() => {
+  socket.emit('check_online', (message) => {
+    console.log(message);
+  });
+  socket.io.reconnection(false);
   socket.emit('findAllMessages', {}, (resposne) => {
     messages.value = resposne;
   });
 
   socket.on('message', (message) => {
     messages.value.push(message);
+    scrollToBottom();
   });
 
   socket.on('typing', ({ name, isTyping }) => {
@@ -37,14 +56,16 @@ onBeforeMount(() => {
     }
   });
 
-  socket.on('disconected', (name) => {
-    console.log(name.name + ' is disconected');
+  socket.on('disconected', () => {
+    messages.value = '';
+  });
+  socket.on('active_users', (users) => {
+    currentUsers.value = Object.values(users);
   });
 });
 
-socket.on('active_users', (users) => {
-  currentUsers.value = Object.values(users);
-  console.log('active users', users);
+onBeforeUnmount(() => {
+  clearTimeout(timeout.value);
 });
 
 const join = () => {
@@ -115,9 +136,14 @@ const disconected = () => {
       class="flex lg:flex-col justify-between bg-gray-100 dark:bg-gray-800 lg:col-span-1 lg:p-8 p-4 relative"
     >
       <div class="w-1/2 lg:w-full">
-        <h1 class="lg:text-2xl text-xl font-bold mb-4">
-          <i class="fas fa-users mr-2"></i>Current Users
-        </h1>
+        <div class="flex justify-between items-center">
+          <h1 class="lg:text-2xl text-xl font-bold">
+            <i class="fas fa-users mr-2"></i>Current Users
+          </h1>
+          <h1 class="text-sm text-green-500 hidden lg:block">
+            {{ currentUsers.length }} online
+          </h1>
+        </div>
         <div class="flex lg:flex-col overflow-x-auto lg:w-full">
           <h1
             v-for="user in currentUsers"
@@ -136,6 +162,9 @@ const disconected = () => {
             {{ user }}
           </h1>
         </div>
+        <h1 class="text-sm text-green-500 lg:hidden">
+          {{ currentUsers.length }} online
+        </h1>
       </div>
       <div class="lg:block absolute hidden bottom-0 py-4">
         <h1 class="text-sm">Create By RedHacKeR</h1>
@@ -212,6 +241,9 @@ const disconected = () => {
               {{ message.text }}
             </h1>
           </div>
+          <span v-if="message.name === name" class="text-sm text-gray-400"
+            >{{ message.readed }} Read</span
+          >
         </div>
       </div>
 

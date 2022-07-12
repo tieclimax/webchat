@@ -36,6 +36,11 @@ export class MessagesGateway {
     return this.messagesService.findAll();
   }
 
+  // @SubscribeMessage('check_online')
+  // checkOnline(@ConnectedSocket() client: Socket) {
+  //   //  emit every 3 seconds to check user online
+  // }
+
   @SubscribeMessage('join')
   joinRoom(
     @MessageBody('name') name: string,
